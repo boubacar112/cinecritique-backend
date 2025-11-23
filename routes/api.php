@@ -4,6 +4,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\MovieController;
+use App\Http\Controllers\Api\ProfileController;
+
+Route::get('/profiles/{username}', [ProfileController::class, 'show']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::put('/profile', [ProfileController::class, 'update']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/me', [AuthController::class, 'me']);
+});
+
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
