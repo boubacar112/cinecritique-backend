@@ -5,30 +5,66 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\MovieController;
 use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\ProfileController;
 
-Route::post('/register', [AuthController::class, 'register']); //Register a new user
-Route::post('/login', [AuthController::class, 'login']);  //Login an existing user
+/*
+|--------------------------------------------------------------------------
+| Routes API d'authentification (publiques)
+|--------------------------------------------------------------------------
+*/
 
-Route::get('/movies/search', [MovieController::class, 'search']);   //Rechercher des films
-Route::get('/movies/popular', [MovieController::class, 'popular']); //Récupérer les films
-Route::get('/movies/top-rated', [MovieController::class, 'topRated']); //Récupérer les films les mieux notés
-Route::get('/movies/discover', [MovieController::class, 'discover']);  //Découvrir des films
-Route::get('/movies/{id}', [MovieController::class, 'show']);      //Récupérer les détails d'un film
-Route::get('/genres', [MovieController::class, 'genres']);         //Récupérer les genres
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
-// Reviews (critiques) - Actions publiques
+/*
+|--------------------------------------------------------------------------
+| Routes API Films (publiques - pas besoin d'authentification)
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/movies/search', [MovieController::class, 'search']);
+Route::get('/movies/popular', [MovieController::class, 'popular']);
+Route::get('/movies/top-rated', [MovieController::class, 'topRated']);
+Route::get('/movies/discover', [MovieController::class, 'discover']);
+Route::get('/movies/{id}', [MovieController::class, 'show']);
+Route::get('/genres', [MovieController::class, 'genres']);
+
+/*
+|--------------------------------------------------------------------------
+| Routes API Reviews (publiques - consultation)
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/movies/{movie_id}/reviews', [ReviewController::class, 'getMovieReviews']);
 Route::get('/users/{user_id}/reviews', [ReviewController::class, 'getUserReviews']);
 
+/*
+|--------------------------------------------------------------------------
+| Routes API Profils (publiques - consultation)
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/profiles/{username}', [ProfileController::class, 'show']);
+
+/*
+|--------------------------------------------------------------------------
+| Routes API protégées (nécessitent un token)
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware('auth:sanctum')->group(function () {
-    // Authenticated user actions
+    
+    // Authentification
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
-
-  // Reviews (critiques) - Actions protégées
+    
+    // Profil utilisateur
+    Route::put('/profile', [ProfileController::class, 'update']);
+    
+    // Reviews (critiques) - Actions protégées
     Route::post('/reviews', [ReviewController::class, 'store']);
     Route::put('/reviews/{id}', [ReviewController::class, 'update']);
     Route::delete('/reviews/{id}', [ReviewController::class, 'destroy']);
-    Route::get('/my-reviews', [ReviewController::class, 'myReviews']);  
-}); //Protected routes for authenticated users
+    Route::get('/my-reviews', [ReviewController::class, 'myReviews']);
+    
+});

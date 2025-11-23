@@ -19,14 +19,20 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
+            'username' => 'required|string|max:255|unique:users|alpha_dash',
             'password' => 'required|string|min:8|confirmed',
+            'bio' => 'nullable|string|max:500',
+            'avatar' => 'nullable|url',
         ]);
 
         // Créer l'utilisateur
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'username' => $request->username,
             'password' => Hash::make($request->password),
+            'bio' => $request->bio,
+            'avatar' => $request->avatar,
         ]);
 
         // Créer un token pour l'utilisateur
@@ -88,6 +94,7 @@ class AuthController extends Controller
      */
     public function me(Request $request)
     {
+        $user = $request-> user()->load('reviews');
         return response()->json([
             'user' => $request->user(),
         ], 200);
