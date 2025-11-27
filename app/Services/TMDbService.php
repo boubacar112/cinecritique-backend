@@ -22,7 +22,7 @@ class TMDbService
      */
     public function searchMovies($query, $page = 1)
     {
-        $response = Http::get("{$this->baseUrl}/search/movie", [
+        $response = Http::withoutVerifying()->get("{$this->baseUrl}/search/movie", [
             'api_key' => $this->apiKey,
             'query' => $query,
             'language' => 'fr-FR',
@@ -37,10 +37,10 @@ class TMDbService
      */
     public function getMovieDetails($movieId)
     {
-        $response = Http::get("{$this->baseUrl}/movie/{$movieId}", [
+        $response = Http::withoutVerifying()->get("{$this->baseUrl}/movie/{$movieId}", [
             'api_key' => $this->apiKey,
             'language' => 'fr-FR',
-            'append_to_response' => 'credits,videos', // Récupère aussi le casting et les vidéos
+            'append_to_response' => 'credits,videos',
         ]);
 
         return $response->json();
@@ -51,7 +51,7 @@ class TMDbService
      */
     public function getPopularMovies($page = 1)
     {
-        $response = Http::get("{$this->baseUrl}/movie/popular", [
+        $response = Http::withoutVerifying()->get("{$this->baseUrl}/movie/popular", [
             'api_key' => $this->apiKey,
             'language' => 'fr-FR',
             'page' => $page,
@@ -65,7 +65,7 @@ class TMDbService
      */
     public function getTopRatedMovies($page = 1)
     {
-        $response = Http::get("{$this->baseUrl}/movie/top_rated", [
+        $response = Http::withoutVerifying()->get("{$this->baseUrl}/movie/top_rated", [
             'api_key' => $this->apiKey,
             'language' => 'fr-FR',
             'page' => $page,
@@ -79,7 +79,7 @@ class TMDbService
      */
     public function getGenres()
     {
-        $response = Http::get("{$this->baseUrl}/genre/movie/list", [
+        $response = Http::withoutVerifying()->get("{$this->baseUrl}/genre/movie/list", [
             'api_key' => $this->apiKey,
             'language' => 'fr-FR',
         ]);
@@ -99,7 +99,7 @@ class TMDbService
             'page' => 1,
         ], $filters);
 
-        $response = Http::get("{$this->baseUrl}/discover/movie", $params);
+        $response = Http::withoutVerifying()->get("{$this->baseUrl}/discover/movie", $params);
 
         return $response->json();
     }
